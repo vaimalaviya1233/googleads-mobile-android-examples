@@ -19,14 +19,12 @@ package com.google.android.gms.example.jetpackcomposedemo.formats
 import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -40,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
@@ -131,43 +130,49 @@ fun loadNativeAd(context: Context, onAdLoaded: (NativeAd) -> Unit) {
 @Composable
 /** Display a native ad with a user defined template. */
 fun DisplayNativeAdView(nativeAd: NativeAd) {
-  val context = LocalContext.current
-  Box(modifier = Modifier.padding(8.dp).wrapContentHeight(Alignment.Top)) {
+  Box(modifier = Modifier.padding(8.dp)) {
     // Call the NativeAdView composable to display the native ad.
     NativeAdView(nativeAd) {
-      // Inside the NativeAdView composable, display the native ad assets.
-      Column(Modifier.align(Alignment.TopStart).wrapContentHeight(Alignment.Top)) {
-        // Display the ad attribution.
-        NativeAdAttribution(text = context.getString(R.string.attribution))
-        Row {
-          // If available, display the icon asset.
-          nativeAd.icon?.let { icon ->
-            NativeAdIconView(Modifier.padding(5.dp)) {
-              icon.drawable?.toBitmap()?.let { bitmap ->
-                Image(bitmap = bitmap.asImageBitmap(), "Icon")
+      Column(modifier = Modifier.fillMaxWidth()) {
+        Box {
+          Row(modifier = Modifier.fillMaxWidth()) {
+            // If available, display the icon asset.
+            nativeAd.icon?.let { icon ->
+              NativeAdIconView(Modifier.padding(5.dp)) {
+                icon.drawable?.toBitmap()?.let { bitmap ->
+                  Image(bitmap = bitmap.asImageBitmap(), "Icon")
+                }
+              }
+            }
+            Column {
+              // If available, display the headline asset.
+              nativeAd.headline?.let {
+                NativeAdHeadlineView {
+                  Text(text = it, style = MaterialTheme.typography.headlineLarge)
+                }
+              }
+              // If available, display the star rating asset.
+              nativeAd.starRating?.let {
+                NativeAdStarRatingView {
+                  Text(text = "Rated $it", style = MaterialTheme.typography.labelMedium)
+                }
               }
             }
           }
-          Column {
-            // If available, display the headline asset.
-            nativeAd.headline?.let {
-              NativeAdHeadlineView {
-                Text(text = it, style = MaterialTheme.typography.headlineLarge)
-              }
-            }
-            // If available, display the star rating asset.
-            nativeAd.starRating?.let {
-              NativeAdStarRatingView {
-                Text(text = "Rated $it", style = MaterialTheme.typography.labelMedium)
-              }
-            }
-          }
+          // Display the ad attribution.
+          NativeAdAttribution(
+            modifier = Modifier.align(Alignment.TopStart),
+            text = stringResource(R.string.attribution),
+          )
         }
 
-        // If available, display the body asset.
-        nativeAd.body?.let { NativeAdBodyView { Text(text = it) } }
         // Display the media asset.
-        NativeAdMediaView(Modifier.fillMaxWidth().height(500.dp).fillMaxHeight())
+        NativeAdMediaView(modifier = Modifier.fillMaxWidth())
+
+        // If available, display the body asset.
+        nativeAd.body?.let {
+          NativeAdBodyView(modifier = Modifier.padding(5.dp)) { Text(text = it) }
+        }
 
         Row(Modifier.align(Alignment.End).padding(5.dp)) {
           // If available, display the price asset.
@@ -183,10 +188,6 @@ fun DisplayNativeAdView(nativeAd: NativeAd) {
             }
           }
           // If available, display the call to action asset.
-          // Note: The Jetpack Compose button implements a click handler which overrides the native
-          // ad click handler, causing issues. Use the NativeAdButton which does not implement a
-          // click handler. To handle native ad clicks, use the NativeAd AdListener onAdClicked
-          // callback.
           nativeAd.callToAction?.let { callToAction ->
             NativeAdCallToActionView(Modifier.padding(5.dp)) { NativeAdButton(text = callToAction) }
           }
