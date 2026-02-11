@@ -26,9 +26,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.gms.example.bannerexample.databinding.ActivityMainBinding
@@ -155,6 +157,41 @@ class MainActivity : AppCompatActivity() {
     binding.adViewContainer.removeAllViews()
     binding.adViewContainer.addView(adView)
     // [END create_ad_view]
+
+    // Listen for ad events.
+    adView.adListener =
+      object : AdListener() {
+        override fun onAdLoaded() {
+          // Called when an ad is loaded.
+          Log.d(TAG, "Ad loaded.")
+        }
+
+        override fun onAdFailedToLoad(error: LoadAdError) {
+          // Called when an ad request failed.
+          Log.i(TAG, "Ad failed to load: ${error.message}")
+        }
+
+        override fun onAdOpened() {
+          // Called when an ad opens an overlay that covers the screen.
+          Log.d(TAG, "Ad opened.")
+        }
+
+        override fun onAdClicked() {
+          // Called when a click is recorded for an ad.
+          Log.d(TAG, "Ad clicked.")
+        }
+
+        override fun onAdImpression() {
+          // Called when an impression is recorded for an ad.
+          Log.d(TAG, "Ad recorded an impression.")
+        }
+
+        override fun onAdClosed() {
+          // Called when the user is about to return to the application
+          // after tapping on an ad.
+          Log.d(TAG, "Ad closed.")
+        }
+      }
 
     // [START load_ad]
     val adRequest = AdRequest.Builder().build()
