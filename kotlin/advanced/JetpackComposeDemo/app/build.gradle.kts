@@ -52,7 +52,7 @@ dependencies {
   implementation("androidx.compose.material:material-icons-extended")
   implementation("androidx.compose.foundation:foundation")
   implementation("androidx.navigation:navigation-runtime-ktx:2.8.9")
-  implementation("com.google.android.gms:play-services-ads:24.9.0")
+  implementation("com.google.android.gms:play-services-ads:25.0.0")
   implementation("com.google.android.ump:user-messaging-platform:4.0.0")
   implementation(project(":compose-util"))
   implementation("androidx.navigation:navigation-compose:2.8.9")
